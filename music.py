@@ -17,8 +17,18 @@ def play_random_music():
     file = random.choice(music_files)
     path = os.path.join(MUSIC_DIR, file)
     pygame.mixer.music.load(path)
-    pygame.mixer.music.play()
-    print(f"正在播放：{file}")
+
+    #取得音樂長度
+    try:
+        audio = pygame.mixer.Sound(path)
+        length = audio.get_length()
+        #隨機起始點，避免太接近結尾
+        start_time = random.uniform(0, max(0, length - 10))
+    except Exception as e:
+        print("無法取得音樂長度，從頭播放")
+        start_time = 0
+    pygame.mixer.music.play(start=start_time)
+    print(f"正在播放：{file}，從 {int(start_time)} 秒開始")
 
 def stop_music():
     pygame.mixer.music.stop()
@@ -41,4 +51,5 @@ if __name__ == "__main__":
                 time.sleep(60)
                 stop_music()
             elif line == "STOP":
+
                 stop_music()
